@@ -41,6 +41,7 @@ module.exports = async (req, res) => {
       resource: { name: `recuerdo_${uploadId}.jpg`, parents: [folderId] },
       media: { mimeType: contentType, body: stream },
       fields: 'id',
+      supportsAllDrives: true,
     });
 
     return res.status(200).json({ ok: true, fileId: response.data.id });
