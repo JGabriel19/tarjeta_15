@@ -6,17 +6,35 @@ module.exports = async (req, res) => {
     return res.status(405).json({ ok: false, message: 'Method Not Allowed' });
   }
 
+
   const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
-  const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+const credentialsJson = process.env.GOOGLE_CREDENTIALS;
 
-  if (!folderId || !clientEmail || !privateKey) {
-    return res.status(500).json({ ok: false, message: 'El servidor no está configurado.' });
-  }
+if (!folderId || !credentialsJson) {
+  return res.status(200).json({ configured: false, photos: [] });
+}
 
-  try {
-    const uploadId = req.headers['x-upload-id'] || Date.now();
-    const contentType = req.headers['content-type'] || 'image/jpeg';
+try {
+  const credentials = JSON.parse(credentialsJson);
+
+  const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive'],
+  });
+
+  const drive = google.drive({ version: 'v3', auth });
+  // ... el resto de tu código sigue igual
+  // const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+  // const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  // const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+
+  // if (!folderId || !clientEmail || !privateKey) {
+  //   return res.status(500).json({ ok: false, message: 'El servidor no está configurado.' });
+  // }
+
+  // try {
+  //   const uploadId = req.headers['x-upload-id'] || Date.now();
+  //   const contentType = req.headers['content-type'] || 'image/jpeg';
     
     // Recopilar los chunks del body de la petición
     const chunks = [];
@@ -25,12 +43,12 @@ module.exports = async (req, res) => {
     }
     const buffer = Buffer.concat(chunks);
 
-    const auth = new google.auth.GoogleAuth({
-      credentials: { client_email: clientEmail, private_key: privateKey },
-      scopes: ['https://www.googleapis.com/auth/drive.file'],
-    });
+    // const auth = new google.auth.GoogleAuth({
+    //   credentials: { client_email: clientEmail, private_key: privateKey },
+    //   scopes: ['https://www.googleapis.com/auth/drive.file'],
+    // });
 
-    const drive = google.drive({ version: 'v3', auth });
+    // const drive = google.drive({ version: 'v3', auth });
     const stream = new Readable();
     stream.push(buffer);
     stream.push(null);
