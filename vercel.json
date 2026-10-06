@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/api/album/upload", "destination": "/api/upload" }
+  ],
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 30
+    }
+  }
+}

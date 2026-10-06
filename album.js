@@ -169,8 +169,8 @@
       renderSelection()
     }
   })
-
-  const imageUrl = (id, width) => `/.netlify/images?url=${encodeURIComponent(`/api/album/photo/${id}`)}&w=${width}&fm=webp`
+  
+const imageUrl = (id, width) => `https://drive.google.com/uc?export=view&id=${id}`
 
   const showMore = () => {
     const next = Math.min(visiblePhotos + 6, galleryPhotos.length)
